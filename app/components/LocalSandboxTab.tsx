@@ -167,7 +167,7 @@ const LocalSandboxTab = () => {
         </h4>
         {connections && connections.length > 0 ? (
           <div className="space-y-2">
-            {connections.map((conn) => (
+            {connections.map((conn: any) => (
               <div
                 key={conn.connectionId}
                 className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg"

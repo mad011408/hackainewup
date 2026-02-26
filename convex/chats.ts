@@ -532,7 +532,7 @@ export const deleteChat = mutation({
           if (message.file_ids && message.file_ids.length > 0) {
             for (const storageId of message.file_ids) {
               try {
-                const file = await ctx.db.get(storageId);
+                const file = (await ctx.db.get(storageId)) as any;
                 if (file) {
                   // Delete from appropriate storage
                   if (file.s3_key) {
@@ -727,7 +727,7 @@ export const deleteAllChats = mutation({
             if (message.file_ids && message.file_ids.length > 0) {
               for (const storageId of message.file_ids) {
                 try {
-                  const file = await ctx.db.get(storageId);
+                  const file = (await ctx.db.get(storageId)) as any;
                   if (file) {
                     // Delete from appropriate storage
                     if (file.s3_key) {
@@ -836,7 +836,7 @@ export const deleteAllChatsForUser = mutation({
         if (!message.source_message_id && message.file_ids?.length) {
           for (const storageId of message.file_ids) {
             try {
-              const file = await ctx.db.get(storageId);
+              const file = (await ctx.db.get(storageId)) as any;
               if (file) {
                 if (file.s3_key) {
                   await ctx.scheduler.runAfter(
@@ -935,7 +935,7 @@ export const saveLatestSummary = mutation({
 
       if (chat.latest_summary_id) {
         try {
-          const oldSummary = await ctx.db.get(chat.latest_summary_id);
+          const oldSummary = (await ctx.db.get(chat.latest_summary_id)) as any;
           if (oldSummary) {
             previousSummaries = [
               {
@@ -1007,7 +1007,7 @@ export const getLatestSummaryForBackend = query({
       }
 
       // Fast ID lookup (single document read)
-      const summary = await ctx.db.get(chat.latest_summary_id);
+      const summary = (await ctx.db.get(chat.latest_summary_id)) as any;
 
       if (!summary) {
         return null;
@@ -1023,4 +1023,3 @@ export const getLatestSummaryForBackend = query({
     }
   },
 });
-

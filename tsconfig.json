@@ -23,7 +23,8 @@
       "@/*": ["./*"],
       "@/convex/_generated/api": ["./convex/mock-api.ts"],
       "convex/react": ["./convex/mock.ts"],
-      "convex/values": ["./convex/mock.ts"]
+      "convex/values": ["./convex/mock.ts"],
+      "convex/server": ["./convex/mock-server.ts"]
     }
   },
   "include": [
@@ -39,6 +40,9 @@
     "node_modules",
     "**/*.test.ts",
     "**/*.test.tsx",
-    "**/__tests__/**"
+    "**/__tests__/**",
+    "convex/**",
+    "e2e/**",
+    "scripts/**"
   ]
 }

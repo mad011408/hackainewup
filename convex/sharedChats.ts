@@ -53,7 +53,7 @@ export const shareChat = mutation({
     });
 
     // Re-fetch to ensure we return the persisted value, handling potential race conditions
-    const persisted = await ctx.db.get(chat._id);
+    const persisted = (await ctx.db.get(chat._id)) as any;
     if (!persisted?.share_id || !persisted.share_date) {
       throw new Error("Failed to persist share metadata");
     }

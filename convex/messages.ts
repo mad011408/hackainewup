@@ -48,8 +48,7 @@ const tryFallbackSummary = async (
     if (cutoffMsg && cutoffMsg._creationTime < earliestDeletedTime) {
       await ctx.db.patch(summaryId, {
         summary_text: previousSummaries[i].summary_text,
-        summary_up_to_message_id:
-          previousSummaries[i].summary_up_to_message_id,
+        summary_up_to_message_id: previousSummaries[i].summary_up_to_message_id,
         previous_summaries: previousSummaries.slice(i + 1),
       });
       return true;
@@ -73,7 +72,7 @@ const checkAndInvalidateSummary = async (
 
     if (!chat || !chat.latest_summary_id) return;
 
-    const summary = await ctx.db.get(chat.latest_summary_id);
+    const summary = (await ctx.db.get(chat.latest_summary_id)) as any;
     if (!summary) return;
 
     const previousSummaries: {
@@ -218,7 +217,7 @@ export const saveMessage = mutation({
             // Mark new files as linked
             for (const fileId of newFileIds) {
               try {
-                const file = await ctx.db.get(fileId);
+                const file = (await ctx.db.get(fileId)) as any;
                 if (file && !file.is_attached) {
                   await ctx.db.patch(file._id, { is_attached: true });
                 }
@@ -296,7 +295,7 @@ export const saveMessage = mutation({
       if (args.fileIds && args.fileIds.length > 0) {
         for (const fileId of args.fileIds) {
           try {
-            const file = await ctx.db.get(fileId);
+            const file = (await ctx.db.get(fileId)) as any;
             if (!file) {
               console.warn("File not found while marking attached:", fileId);
               continue;
@@ -428,7 +427,7 @@ export const getMessagesByChatId = query({
         // Get feedback if exists
         let feedback = null;
         if (message.role === "assistant" && message.feedback_id) {
-          const feedbackDoc = await ctx.db.get(message.feedback_id);
+          const feedbackDoc = (await ctx.db.get(message.feedback_id)) as any;
           if (feedbackDoc) {
             feedback = {
               feedbackType: feedbackDoc.feedback_type as
@@ -641,7 +640,7 @@ export const deleteLastAssistantMessage = mutation({
         ) {
           for (const storageId of lastAssistantMessage.file_ids) {
             try {
-              const file = await ctx.db.get(storageId);
+              const file = (await ctx.db.get(storageId)) as any;
               if (file) {
                 // Delete from appropriate storage
                 if (file.s3_key) {
@@ -1140,7 +1139,7 @@ export const regenerateWithNewContent = mutation({
       // Delete removed files
       for (const fileId of filesToDelete) {
         try {
-          const file = await ctx.db.get(fileId);
+          const file = (await ctx.db.get(fileId)) as any;
           if (file) {
             // Delete from appropriate storage
             if (file.s3_key) {
@@ -1207,7 +1206,7 @@ export const regenerateWithNewContent = mutation({
         if (msg.file_ids && msg.file_ids.length > 0) {
           for (const fileId of msg.file_ids) {
             try {
-              const file = await ctx.db.get(fileId);
+              const file = (await ctx.db.get(fileId)) as any;
               if (file) {
                 // Delete from appropriate storage
                 if (file.s3_key) {

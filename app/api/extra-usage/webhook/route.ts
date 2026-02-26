@@ -4,7 +4,14 @@ import { ConvexHttpClient } from "convex/browser";
 import { api } from "@/convex/_generated/api";
 import Stripe from "stripe";
 
-const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
+// Lazy-initialize to avoid build-time crash when env var is not set
+let _convex: ConvexHttpClient | null = null;
+function getConvex() {
+  if (!_convex) {
+    _convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
+  }
+  return _convex;
+}
 
 /**
  * POST /api/extra-usage/webhook
@@ -77,7 +84,7 @@ export async function POST(req: NextRequest) {
 
       // Add credits to user's balance (idempotent - uses Stripe event ID for deduplication)
       try {
-        const result = await convex.mutation(api.extraUsage.addCredits, {
+        const result = await getConvex().mutation(api.extraUsage.addCredits, {
           serviceKey: process.env.CONVEX_SERVICE_ROLE_KEY!,
           userId,
           amountDollars,

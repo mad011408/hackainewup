@@ -2,7 +2,7 @@ import "server-only";
 
 import { api } from "@/convex/_generated/api";
 import { ChatSDKError } from "../errors";
-import { ConvexHttpClient } from "convex/browser";
+import { getConvexClient } from "@/lib/db/convex-client";
 import { UIMessage, UIMessagePart } from "ai";
 import { extractFileIdsFromParts } from "@/lib/utils/file-token-utils";
 import {
@@ -20,7 +20,7 @@ import type { SubscriptionTier, NoteCategory } from "@/types";
 import type { Id } from "@/convex/_generated/dataModel";
 import { v4 as uuidv4 } from "uuid";
 
-const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
+
 const serviceKey = process.env.CONVEX_SERVICE_ROLE_KEY || "";
 
 export async function getChatById({ id }: { id: string }) {
@@ -30,7 +30,7 @@ export async function getChatById({ id }: { id: string }) {
   }
   
   try {
-    const selectedChat = await convex.query(api.chats.getChatById, {
+    const selectedChat = await getConvexClient().query(api.chats.getChatById, {
       serviceKey,
       id,
     });
@@ -55,7 +55,7 @@ export async function saveChat({
   }
   
   try {
-    return await convex.mutation(api.chats.saveChat, {
+    return await getConvexClient().mutation(api.chats.saveChat, {
       serviceKey,
       id,
       userId,
@@ -109,7 +109,7 @@ export async function saveMessage({
       ...((extraFileIds || []).filter(Boolean) as string[]),
     ];
 
-    return await convex.mutation(api.messages.saveMessage, {
+    return await getConvexClient().mutation(api.messages.saveMessage, {
       serviceKey,
       id: message.id,
       chatId,
@@ -215,7 +215,7 @@ export async function updateChat({
   }
   
   try {
-    return await convex.mutation(api.chats.updateChat, {
+    return await getConvexClient().mutation(api.chats.updateChat, {
       serviceKey,
       chatId,
       title,
@@ -281,7 +281,7 @@ export async function getMessagesByChatId({
             page: UIMessage[];
             isDone: boolean;
             continueCursor: string | null;
-          } = await convex.query(api.messages.getMessagesPageForBackend, {
+          } = await getConvexClient().query(api.messages.getMessagesPageForBackend, {
             serviceKey,
             chatId,
             userId,
@@ -464,7 +464,7 @@ export async function getUserCustomization({ userId }: { userId: string }) {
   }
   
   try {
-    const userCustomization = await convex.query(
+    const userCustomization = await getConvexClient().query(
       api.userCustomization.getUserCustomizationForBackend,
       {
         serviceKey,
@@ -486,7 +486,7 @@ export async function getMemories({
   subscription: SubscriptionTier;
 }) {
   try {
-    const memories = await convex.query(api.memories.getMemoriesForBackend, {
+    const memories = await getConvexClient().query(api.memories.getMemoriesForBackend, {
       serviceKey,
       userId,
       subscription,
@@ -503,7 +503,7 @@ const generateMemoryId = () => {
 
 export async function getMemoryById({ memoryId }: { memoryId: string }) {
   try {
-    const memory = await convex.query(api.memories.getMemoryByIdForBackend, {
+    const memory = await getConvexClient().query(api.memories.getMemoryByIdForBackend, {
       serviceKey,
       memoryId,
     });
@@ -529,7 +529,7 @@ export async function startStream({
   }
   
   try {
-    await convex.mutation(api.chatStreams.startStream, {
+    await getConvexClient().mutation(api.chatStreams.startStream, {
       serviceKey,
       chatId,
       streamId,
@@ -547,7 +547,7 @@ export async function prepareForNewStream({ chatId }: { chatId: string }) {
   }
   
   try {
-    await convex.mutation(api.chatStreams.prepareForNewStream, {
+    await getConvexClient().mutation(api.chatStreams.prepareForNewStream, {
       serviceKey,
       chatId,
     });
@@ -571,7 +571,7 @@ export async function clearActiveTriggerRunIdFromBackend({
   }
   
   try {
-    await convex.mutation(api.chatStreams.clearActiveTriggerRunIdFromBackend, {
+    await getConvexClient().mutation(api.chatStreams.clearActiveTriggerRunIdFromBackend, {
       serviceKey,
       chatId,
     });
@@ -588,7 +588,7 @@ export async function getCancellationStatus({ chatId }: { chatId: string }) {
   }
   
   try {
-    const status = await convex.query(api.chatStreams.getCancellationStatus, {
+    const status = await getConvexClient().query(api.chatStreams.getCancellationStatus, {
       serviceKey,
       chatId,
     });
@@ -613,7 +613,7 @@ export async function startTempStream({
   }
   
   try {
-    await convex.mutation(api.tempStreams.startTempStream, {
+    await getConvexClient().mutation(api.tempStreams.startTempStream, {
       serviceKey,
       chatId,
       userId,
@@ -634,7 +634,7 @@ export async function getTempCancellationStatus({
   }
   
   try {
-    return await convex.query(api.tempStreams.getTempCancellationStatus, {
+    return await getConvexClient().query(api.tempStreams.getTempCancellationStatus, {
       serviceKey,
       chatId,
     });
@@ -649,7 +649,7 @@ export async function deleteTempStreamForBackend({
   chatId: string;
 }) {
   try {
-    await convex.mutation(api.tempStreams.deleteTempStreamForBackend, {
+    await getConvexClient().mutation(api.tempStreams.deleteTempStreamForBackend, {
       serviceKey,
       chatId,
     });
@@ -669,7 +669,7 @@ export async function createMemory({
 }) {
   try {
     const finalMemoryId = memoryId || generateMemoryId();
-    const returnedId = await convex.mutation(
+    const returnedId = await getConvexClient().mutation(
       api.memories.createMemoryForBackend,
       {
         serviceKey,
@@ -697,7 +697,7 @@ export async function updateMemory({
   content: string;
 }) {
   try {
-    await convex.mutation(api.memories.updateMemoryForBackend, {
+    await getConvexClient().mutation(api.memories.updateMemoryForBackend, {
       serviceKey,
       userId,
       memoryId,
@@ -720,7 +720,7 @@ export async function deleteMemory({
   memoryId: string;
 }) {
   try {
-    await convex.mutation(api.memories.deleteMemoryForBackend, {
+    await getConvexClient().mutation(api.memories.deleteMemoryForBackend, {
       serviceKey,
       userId,
       memoryId,
@@ -749,7 +749,7 @@ export async function saveChatSummary({
   }
   
   try {
-    await convex.mutation(api.chats.saveLatestSummary, {
+    await getConvexClient().mutation(api.chats.saveLatestSummary, {
       serviceKey,
       chatId,
       summaryText,
@@ -776,7 +776,7 @@ export async function getLatestSummary({ chatId }: { chatId: string }) {
   }
   
   try {
-    const summary = await convex.query(api.chats.getLatestSummaryForBackend, {
+    const summary = await getConvexClient().query(api.chats.getLatestSummaryForBackend, {
       serviceKey,
       chatId,
     });
@@ -810,7 +810,7 @@ export async function createNote({
   }
   
   try {
-    const result = await convex.mutation(api.notes.createNoteForBackend, {
+    const result = await getConvexClient().mutation(api.notes.createNoteForBackend, {
       serviceKey,
       userId,
       title,
@@ -844,7 +844,7 @@ export async function listNotes({
   }
   
   try {
-    const result = await convex.query(api.notes.listNotesForBackend, {
+    const result = await getConvexClient().query(api.notes.listNotesForBackend, {
       serviceKey,
       userId,
       category,
@@ -874,7 +874,7 @@ export async function updateNote({
   tags?: string[];
 }) {
   try {
-    const result = await convex.mutation(api.notes.updateNoteForBackend, {
+    const result = await getConvexClient().mutation(api.notes.updateNoteForBackend, {
       serviceKey,
       userId,
       noteId,
@@ -899,7 +899,7 @@ export async function deleteNote({
   noteId: string;
 }) {
   try {
-    const result = await convex.mutation(api.notes.deleteNoteForBackend, {
+    const result = await getConvexClient().mutation(api.notes.deleteNoteForBackend, {
       serviceKey,
       userId,
       noteId,
@@ -921,7 +921,7 @@ export async function getNotes({
   subscription: SubscriptionTier;
 }) {
   try {
-    const notes = await convex.query(api.notes.getNotesForBackend, {
+    const notes = await getConvexClient().query(api.notes.getNotesForBackend, {
       serviceKey,
       userId,
       subscription,

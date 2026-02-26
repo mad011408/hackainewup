@@ -1,7 +1,7 @@
 import "server-only";
 
 import { api } from "@/convex/_generated/api";
-import { ConvexHttpClient } from "convex/browser";
+import { getConvexClient } from "@/lib/db/convex-client";
 import { UIMessagePart, UIMessage } from "ai";
 import { Id } from "@/convex/_generated/dataModel";
 import {
@@ -11,7 +11,7 @@ import {
 import type { SubscriptionTier } from "@/types";
 import type { FileMessagePart } from "@/types/file";
 
-const convex = new ConvexHttpClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
+
 
 /**
  * Type guard to check if a message part is a file part
@@ -40,7 +40,7 @@ export const getFileTokensByIds = async (
   if (!fileIds.length) return {};
 
   try {
-    const tokens = await convex.query(api.fileStorage.getFileTokensByFileIds, {
+    const tokens = await getConvexClient().query(api.fileStorage.getFileTokensByFileIds, {
       serviceKey: process.env.CONVEX_SERVICE_ROLE_KEY!,
       fileIds,
     });

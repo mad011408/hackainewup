@@ -192,7 +192,7 @@ export async function prepareAgentPayload(
     });
   }
 
-  const uploadBasePath = getUploadBasePath(sandboxPreference);
+  const uploadBasePath = getUploadBasePath(sandboxPreference ?? undefined);
 
   const { processedMessages, selectedModel, sandboxFiles } =
     await processChatMessages({

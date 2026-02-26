@@ -61,6 +61,7 @@ export const checkFreeUserRateLimit = async (
     }
 
     return {
+      allowed: true,
       remaining,
       resetTime: new Date(reset),
       limit: requestLimit,

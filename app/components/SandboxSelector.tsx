@@ -65,7 +65,7 @@ export function SandboxSelector({
       description: "",
       warning: null,
     },
-    ...(connections?.map((conn) => ({
+    ...(connections?.map((conn: any) => ({
       id: conn.connectionId,
       label: conn.name,
       icon: Laptop,

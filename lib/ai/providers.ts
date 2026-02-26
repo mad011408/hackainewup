@@ -4,11 +4,13 @@ import { openrouter } from "@openrouter/ai-sdk-provider";
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 
 const ollama = createOpenAICompatible({
+  name: "ollama",
   baseURL: "https://ollama.com/v1",
   apiKey: process.env.OLLAMA_API_KEY || "",
 });
 
 const opencode = createOpenAICompatible({
+  name: "opencode",
   baseURL: "https://opencode.ai/zen/v1",
   apiKey: process.env.OPENCODE_API_KEY || "",
 });

@@ -194,6 +194,7 @@ export const checkTokenBucketLimit = async (
           ]);
 
           return {
+            allowed: true,
             remaining: Math.min(
               sessionResult.remaining,
               weeklyResult.remaining,
@@ -274,6 +275,7 @@ export const checkTokenBucketLimit = async (
     ]);
 
     return {
+      allowed: true,
       remaining: Math.min(sessionResult.remaining, weeklyResult.remaining),
       resetTime: new Date(Math.min(sessionResult.reset, weeklyResult.reset)),
       limit: Math.min(sessionLimit, weeklyLimit),

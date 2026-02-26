@@ -206,6 +206,7 @@ export type ChatMessage = UIMessage<MessageMetadata> & {
 };
 
 export type RateLimitInfo = {
+  allowed: boolean;
   remaining: number;
   resetTime: Date;
   limit: number;

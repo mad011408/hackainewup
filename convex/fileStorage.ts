@@ -79,7 +79,7 @@ export const deleteFile = mutation({
       });
     }
 
-    const file = await ctx.db.get(args.fileId);
+    const file = (await ctx.db.get(args.fileId)) as any;
 
     if (!file) {
       throw new ConvexError({
@@ -325,7 +325,7 @@ export const getFileById = internalQuery({
     v.null(),
   ),
   handler: async (ctx, args) => {
-    const file = await ctx.db.get(args.fileId);
+    const file = (await ctx.db.get(args.fileId)) as any;
     return file;
   },
 });
@@ -379,7 +379,7 @@ export const saveFileToDb = internalMutation({
 
     // Insert into aggregate for O(log(n)) counting
     // Uses insertIfDoesNotExist for idempotency in case of race with backfill
-    const doc = await ctx.db.get(fileId);
+    const doc = (await ctx.db.get(fileId)) as any;
     if (doc) {
       await fileCountAggregate.insertIfDoesNotExist(ctx, doc);
     }

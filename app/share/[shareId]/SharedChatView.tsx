@@ -13,6 +13,7 @@ import MainSidebar from "@/app/components/Sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { useGlobalState } from "@/app/contexts/GlobalState";
 import { useEffect } from "react";
+import { useMockAuth } from "convex/react";
 
 // Desktop wrapper component that connects ComputerSidebarBase to SharedChatContext
 function SharedComputerSidebarDesktop({ messages }: { messages: any[] }) {

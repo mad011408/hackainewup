@@ -49,6 +49,7 @@ const SidebarUserNav = ({ isCollapsed = false }: { isCollapsed?: boolean }) => {
     email: "user@example.com",
     firstName: "Demo",
     lastName: "User",
+    profilePictureUrl: null as string | null,
   };
 
   const getDisplayName = () => {
